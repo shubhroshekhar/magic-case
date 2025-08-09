@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=77.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "magic-case"
+version = "0.0.1"
+description = "A magical text case converter for Python"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Shubhro Shekhar", email = "shubhroshekhar@gmail.com" }
+]
+requires-python = ">=3.7"
+keywords = ["case", "string", "converter", "text", "camelcase", "snakecase"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+
+[tool.setuptools]
+packages = ["magic_case"]
