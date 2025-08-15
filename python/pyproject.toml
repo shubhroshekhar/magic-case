@@ -1,23 +1,22 @@
 [build-system]
-requires = ["setuptools>=77.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
 
 [project]
 name = "magic-case"
-version = "0.0.1"
-description = "A magical text case converter for Python"
+version = "0.1.0"
+description = "Lightweight utilities for converting strings between common cases"
 readme = "README.md"
-license = "MIT"
-license-files = ["LICENSE"]
-authors = [
-    { name = "Shubhro Shekhar", email = "shubhroshekhar@gmail.com" }
-]
-requires-python = ">=3.7"
-keywords = ["case", "string", "converter", "text", "camelcase", "snakecase"]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Your Name" }]
+dependencies = [
+  "pydantic>=1.10,<2",
 ]
 
-[tool.setuptools]
+[project.urls]
+Homepage = "https://pypi.org/project/magic-case/"
+Repository = "https://github.com/your-org/magic-case"
+
+[tool.hatch.build.targets.wheel]
 packages = ["magic_case"]

@@ -1,17 +1,19 @@
-from .core import (
-    to_upper_case,
-    to_lower_case,
-    to_camel_case,
-    to_pascal_case,
-    to_snake_case,
-    to_kebab_case,
-)
+from .base import BaseCase
+from .snake import SnakeCase
+from .camel import CamelCase
+from .pascal import PascalCase
+from .kebab import KebabCase
+from .upper import UpperCase
+from .sentence import SentenceCase
+from .title import TitleCase
 
 __all__ = [
-    "to_upper_case",
-    "to_lower_case",
-    "to_camel_case",
-    "to_pascal_case",
-    "to_snake_case",
-    "to_kebab_case",
+    "BaseCase",
+    "SnakeCase",
+    "CamelCase",
+    "PascalCase",
+    "KebabCase",
+    "UpperCase",
+    "SentenceCase",
+    "TitleCase",
 ]
