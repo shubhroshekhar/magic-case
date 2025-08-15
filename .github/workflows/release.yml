@@ -31,6 +31,15 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v4
 
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+          && sudo apt update \
+          && sudo apt install gh -y
+
       - name: Sync dependencies
         working-directory: python
         run: uv sync --no-progress
@@ -73,34 +82,39 @@ jobs:
         run: uv run python -m build
 
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.version.outputs.version }}
-          release_name: Release v${{ steps.version.outputs.version }}
-          body: |
-            ## What's Changed
-            
-            Release v${{ steps.version.outputs.version }}
-            
-            ### Features
-            - Add your features here
-            
-            ### Bug Fixes
-            - Add your bug fixes here
-            
-            ### Documentation
-            - Add your documentation updates here
-          draft: false
-          prerelease: false
+        id: create_release
+        run: |
+          gh release create v${{ steps.version.outputs.version }} \
+            --title "Release v${{ steps.version.outputs.version }}" \
+            --notes "## What's Changed
 
-      - name: Upload Python Package
-        uses: actions/upload-release-asset@v1
+          Release v${{ steps.version.outputs.version }}
+
+          ### Features
+          - Add your features here
+
+          ### Bug Fixes
+          - Add your bug fixes here
+
+          ### Documentation
+          - Add your documentation updates here" \
+            --draft=false \
+            --prerelease=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: python/dist/magic_case-${{ steps.version.outputs.version }}.tar.gz
-          asset_name: magic_case-${{ steps.version.outputs.version }}.tar.gz
-          asset_content_type: application/gzip
+
+      - name: Upload Source Distribution
+        run: |
+          gh release upload v${{ steps.version.outputs.version }} \
+            python/dist/magic_case-${{ steps.version.outputs.version }}.tar.gz \
+            --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Wheel Distribution
+        run: |
+          gh release upload v${{ steps.version.outputs.version }} \
+            python/dist/magic_case-${{ steps.version.outputs.version }}-py3-none-any.whl \
+            --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
