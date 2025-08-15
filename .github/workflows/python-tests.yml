@@ -26,7 +26,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        task: ["test", "lint"]
     defaults:
       run:
         working-directory: python
@@ -46,6 +47,15 @@ jobs:
         run: uv sync --no-progress
 
       - name: Run tests
+        if: matrix.task == 'test'
         run: uv run pytest -q
+
+      - name: Run linting
+        if: matrix.task == 'lint'
+        run: uv run ruff check .
+
+      - name: Run formatting check
+        if: matrix.task == 'lint'
+        run: uv run ruff format --check .
 
 

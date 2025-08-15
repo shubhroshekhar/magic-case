@@ -1,13 +1,13 @@
 import pytest
 
 from magic_case import (
-    SnakeCase,
     CamelCase,
-    PascalCase,
     KebabCase,
-    UpperCase,
+    PascalCase,
     SentenceCase,
+    SnakeCase,
     TitleCase,
+    UpperCase,
 )
 
 
@@ -68,5 +68,3 @@ def test_invalid_input_type_raises():
     with pytest.raises(TypeError):
         # @ts-ignore - intentionally wrong type
         SnakeCase(123)  # type: ignore[arg-type]
-
-
