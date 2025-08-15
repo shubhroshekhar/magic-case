@@ -9,7 +9,7 @@ description = "Lightweight utilities for converting strings between common cases
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
-authors = [{ name = "Your Name" }]
+authors = [{ name = "Shubhro Shekhar", email = "shubhroshekhar@gmail.com", url = "https://github.com/shubhroshekhar" }]
 dependencies = []
 
 [project.urls]
@@ -18,3 +18,12 @@ Repository = "https://github.com/your-org/magic-case"
 
 [tool.hatch.build.targets.wheel]
 packages = ["magic_case"]
+
+[tool.uv]
+dev-dependencies = [
+  "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
