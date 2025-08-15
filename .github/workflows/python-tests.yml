@@ -1,0 +1,51 @@
+name: Python tests
+
+on:
+  push:
+    branches: [ "**" ]
+    paths:
+      - "python/**"
+      - ".github/workflows/python-tests.yml"
+  pull_request:
+    paths:
+      - "python/**"
+      - ".github/workflows/python-tests.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: python-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: python
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+    defaults:
+      run:
+        working-directory: python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Sync dependencies
+        run: uv sync --no-progress
+
+      - name: Run tests
+        run: uv run pytest -q
+
+
