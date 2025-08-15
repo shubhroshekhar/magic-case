@@ -4,15 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "magic-case"
-version = "0.1.0"
+version = "0.2.0"
 description = "Lightweight utilities for converting strings between common cases"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 authors = [{ name = "Your Name" }]
-dependencies = [
-  "pydantic>=1.10,<2",
-]
+dependencies = []
 
 [project.urls]
 Homepage = "https://pypi.org/project/magic-case/"

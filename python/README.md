@@ -4,17 +4,17 @@ Lightweight utilities for converting strings between common cases, built on a si
 
 - **Cases**: `SnakeCase`, `CamelCase`, `PascalCase`, `KebabCase`, `UpperCase`, `SentenceCase`, `TitleCase`
 - **Composable**: Construct from raw strings or from another case class
-- **Validation**: Backed by Pydantic (v1) for normalization
+- **Zero deps**: No runtime dependencies
 
 ### Installation
 Using uv (recommended):
 ```bash
-uv add magic-case
+uv add magic-case>=0.2.0
 ```
 
 Standard pip:
 ```bash
-pip install magic-case
+pip install "magic-case>=0.2.0"
 ```
 
 ### Quick start
@@ -52,7 +52,6 @@ print(PascalCase(snake).get())  # HelloWorld
 
 ### Requirements
 - Python 3.8+
-- `pydantic>=1.10,<2` (managed via pyproject)
 
 ### License
 MIT 

@@ -63,4 +63,7 @@ uv publish
 ```
 
 ### Package usage/API
-See `python/README.md` for PyPI install instructions, examples, and API notes. 
+See `python/README.md` for PyPI install instructions, examples, and API notes.
+
+### Notes
+- Since v0.2.0 the Python package is zero-dependency (removed Pydantic) to avoid conflicts in environments like Colab. 
