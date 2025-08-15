@@ -118,3 +118,14 @@ jobs:
             --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to PyPI
+        working-directory: python
+        run: |
+          # Install twine for PyPI upload
+          uv add --dev twine
+          
+          # Upload to PyPI
+          uv run twine upload --username __token__ --password ${{ secrets.PYPI_API_TOKEN }} dist/*
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
