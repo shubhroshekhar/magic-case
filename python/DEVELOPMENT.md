@@ -47,12 +47,52 @@ The project uses pre-commit hooks that automatically run on each commit:
 - **Import sorting:** Automatic with isort
 - **Type hints:** Modern Python syntax (`list[str]` instead of `List[str]`)
 
+## Release Management
+
+### Version Management
+
+Use the release script to manage versions:
+
+```bash
+# Check current version
+python3 scripts/release.py check
+
+# Bump version (auto-increment)
+python3 scripts/release.py bump --type patch    # 0.2.0 → 0.2.1
+python3 scripts/release.py bump --type minor    # 0.2.0 → 0.3.0
+python3 scripts/release.py bump --type major    # 0.2.0 → 1.0.0
+
+# Set specific version
+python3 scripts/release.py bump --version 0.2.1
+
+# Create release (runs checks, creates tag, pushes)
+python3 scripts/release.py release
+```
+
+### Release Process
+
+1. **Update version** in `pyproject.toml` (or use the bump script)
+2. **Create release** using the release script
+3. **GitHub Actions** automatically:
+   - Runs tests and linting
+   - Creates a GitHub release
+   - Builds and uploads the package
+
+### Automatic Tagging
+
+The CI/CD pipeline automatically creates git tags when:
+- Merging to `main`, `master`, or `prod` branches
+- Pushing tags manually
+- Using the manual workflow dispatch
+
 ## CI/CD Pipeline
 
 The GitHub Actions workflow runs:
 - Tests on Python 3.9, 3.10, 3.11, 3.12
 - Linting and formatting checks
 - Matrix strategy for efficient parallel execution
+- Automatic tag creation on production branches
+- Release creation on tag push
 
 ## Adding New Dependencies
 
@@ -65,3 +105,4 @@ The GitHub Actions workflow runs:
 - **Pre-commit fails:** Run `uv run pre-commit run --all-files` to see detailed errors
 - **Linting issues:** Use `uv run ruff check --fix .` for auto-fixes
 - **Formatting issues:** Use `uv run ruff format .` to reformat code
+- **Release fails:** Check that version in `pyproject.toml` matches the tag version
