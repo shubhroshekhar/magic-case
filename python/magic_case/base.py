@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import List, Union
 
 
 class BaseCase(ABC):
@@ -9,9 +10,9 @@ class BaseCase(ABC):
     the specific case in subclasses.
     """
 
-    words: List[str]
+    words: list[str]
 
-    def __init__(self, text_or_obj: Union[str, "BaseCase"]):
+    def __init__(self, text_or_obj: str | BaseCase):
         if isinstance(text_or_obj, BaseCase):
             words = text_or_obj.words
         elif isinstance(text_or_obj, str):
@@ -25,7 +26,7 @@ class BaseCase(ABC):
         self.words = [word.lower() for word in words]
 
     @abstractmethod
-    def _split_into_words(self, text: str) -> List[str]:
+    def _split_into_words(self, text: str) -> list[str]:
         """Split the input text into lowercase words."""
         raise NotImplementedError
 
