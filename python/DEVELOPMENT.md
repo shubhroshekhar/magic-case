@@ -77,6 +77,37 @@ python3 scripts/release.py release
    - Runs tests and linting
    - Creates a GitHub release
    - Builds and uploads the package
+   - **Publishes to PyPI** (if configured)
+
+### PyPI Publishing
+
+The project includes automatic PyPI publishing workflows:
+
+#### **Automatic Publishing**
+- **Release workflow** (`release.yml`): Publishes to PyPI when creating releases
+- **PyPI workflow** (`pypi-publish.yml`): Dedicated PyPI publishing with test options
+
+#### **Manual Publishing**
+```bash
+# Via GitHub Actions UI:
+# 1. Go to Actions → Publish to PyPI
+# 2. Enter version (e.g., "0.2.0")
+# 3. Choose dry_run: true for TestPyPI, false for PyPI
+# 4. Run workflow
+```
+
+#### **PyPI Configuration**
+To enable PyPI publishing, add these secrets to your GitHub repository:
+
+1. **Go to:** Settings → Secrets and variables → Actions
+2. **Add secret:** `PYPI_API_TOKEN`
+3. **Value:** Your PyPI API token from https://pypi.org/manage/account/token/
+
+#### **TestPyPI (Optional)**
+For testing before production:
+- Use `dry_run: true` in the PyPI workflow
+- Publishes to TestPyPI instead of PyPI
+- Safe for testing package builds and uploads
 
 ### Automatic Tagging
 
