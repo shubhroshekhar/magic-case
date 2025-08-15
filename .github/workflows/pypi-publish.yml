@@ -90,9 +90,9 @@ jobs:
         if: github.event.inputs.dry_run == 'true'
         working-directory: python
         run: |
-          uv run twine upload --repository testpypi --username __token__ --password ${{ secrets.PYPI_API_TOKEN }} dist/*
+          uv run twine upload --repository testpypi --username __token__ --password ${{ secrets.TESTPYPI_API_TOKEN }} dist/*
         env:
-          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+          TESTPYPI_API_TOKEN: ${{ secrets.TESTPYPI_API_TOKEN }}
 
       - name: Publish to PyPI
         if: github.event.inputs.dry_run != 'true'
