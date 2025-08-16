@@ -1,17 +1,17 @@
+import re
+
 from .base import BaseCase
 
 
 class CamelSnakeCase(BaseCase):
     def _split_into_words(self, text: str) -> list[str]:
-        # Split on _
-        words = text.lower().split("_")
-        return [word.lower() for word in words if word.strip()]
+        # Split on underscores or camel humps
+        words = re.findall(r"[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])", text.replace("_", " "))
+        return [word.lower() for word in words if word]
 
     def __str__(self) -> str:
-        # Camel case with underscores: Hello_World
         if not self.words:
             return ""
-        result = self.words[0].capitalize()
-        for word in self.words[1:]:
-            result += "_" + word.capitalize()
-        return result
+        first = self.words[0].lower()
+        rest = [w.capitalize() for w in self.words[1:]]
+        return "_".join([first] + rest)

@@ -9,19 +9,13 @@ class HttpHeaderCase(BaseCase):
         Splits a string into words suitable for HTTP header capitalization.
         Handles camelCase, PascalCase, snake_case, and acronyms.
         """
-        # Replace underscores with spaces first (for snake_case)
-        text = text.replace("_", " ")
+        # Must strictly match HttpHeaderCase: "Word-Word-Word"
+        if not re.fullmatch(r"(?:[A-Z][a-z0-9]*)(?:-[A-Z][a-z0-9]*)*", text):
+            raise ValueError(f"Invalid HttpHeaderCase string: {text}")
 
-        # Split camelCase / PascalCase / acronyms
-        pattern = r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])"
-        words = re.split(pattern, text)
-
-        # Split on spaces to handle snake_case or existing spaces
-        final_words = []
-        for w in words:
-            final_words.extend(w.split())
-
-        return final_words
+        # Split by hyphen and lowercase for internal representation
+        words = text.split("-")
+        return [word.lower() for word in words]
 
     def __str__(self) -> str:
         """

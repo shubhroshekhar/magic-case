@@ -2,13 +2,17 @@ import pytest
 
 from magic_case import (
     CamelCase,
+    CamelSnakeCase,
     DotCase,
     FlatCase,
+    HttpHeaderCase,
     KebabCase,
     MacroCase,
     PascalCase,
     PascalSnakeCase,
+    PathCase,
     SentenceCase,
+    SlashTitleCase,
     SnakeCase,
     SpaceCase,
     TitleCase,
@@ -27,14 +31,14 @@ from magic_case import (
         (SentenceCase, "hello world", ["hello", "world"], "Hello world"),
         (TitleCase, "hello world", ["hello", "world"], "Hello World"),
         (DotCase, "hello.world", ["hello", "world"], "hello.world"),
-        # (SpaceCase, "hello world", ["hello", "world"], "hello world"),
+        (SpaceCase, "hello world", ["hello", "world"], "hello world"),
         (FlatCase, "helloworld", ["helloworld"], "helloworld"),
-        # (HttpHeaderCase, "hello-world", ["hello", "world"], "Hello-World"),
-        # (CamelSnakeCase, "hello_World", ["hello", "world"], "hello_World"),
+        (HttpHeaderCase, "Content-Type", ["content", "type"], "Content-Type"),
+        (CamelSnakeCase, "hello_World", ["hello", "world"], "hello_World"),
         (MacroCase, "hello_world", ["hello", "world"], "HELLO_WORLD"),
         (PascalSnakeCase, "Hello_World", ["hello", "world"], "Hello_World"),
-        # (PathCase, "hello/world", ["hello", "world"], "hello/world"),
-        # (SlashTitleCase, "hello/world", ["hello", "world"], "Hello/World"),
+        (PathCase, "hello/world", ["hello", "world"], "hello/world"),
+        (SlashTitleCase, "hello/world", ["hello", "world"], "Hello/World"),
     ],
 )
 def test_basic_cases(cls, input_str, expected_words, expected_str):
@@ -85,3 +89,50 @@ def test_non_string_word_raises():
 
     with pytest.raises(ValueError):
         BadCase("ok123")
+
+
+@pytest.mark.parametrize(
+    "start_cls, input_str, target_cls, expected",
+    [
+        # SnakeCase -> others
+        (SnakeCase, "hello_world", KebabCase, "hello-world"),
+        (SnakeCase, "hello_world", CamelCase, "helloWorld"),
+        (SnakeCase, "hello_world", PascalCase, "HelloWorld"),
+        (SnakeCase, "hello_world", TitleCase, "Hello World"),
+        (SnakeCase, "hello_world", UpperCase, "HELLO_WORLD"),
+        (SnakeCase, "hello_world", DotCase, "hello.world"),
+        # KebabCase -> others
+        (KebabCase, "hello-world", SnakeCase, "hello_world"),
+        (KebabCase, "hello-world", PascalCase, "HelloWorld"),
+        (KebabCase, "hello-world", CamelCase, "helloWorld"),
+        (KebabCase, "hello-world", UpperCase, "HELLO_WORLD"),
+        # CamelCase -> others
+        (CamelCase, "helloWorld", SnakeCase, "hello_world"),
+        (CamelCase, "helloWorld", KebabCase, "hello-world"),
+        (CamelCase, "helloWorld", PascalCase, "HelloWorld"),
+        (CamelCase, "helloWorld", DotCase, "hello.world"),
+        # PascalCase -> others
+        (PascalCase, "HelloWorld", SnakeCase, "hello_world"),
+        (PascalCase, "HelloWorld", KebabCase, "hello-world"),
+        (PascalCase, "HelloWorld", TitleCase, "Hello World"),
+        # TitleCase -> others
+        (TitleCase, "hello world", SnakeCase, "hello_world"),
+        (TitleCase, "hello world", CamelCase, "helloWorld"),
+        (TitleCase, "hello world", PascalCase, "HelloWorld"),
+        # DotCase -> others
+        (DotCase, "hello.world", SnakeCase, "hello_world"),
+        (DotCase, "hello.world", KebabCase, "hello-world"),
+        (DotCase, "hello.world", PascalCase, "HelloWorld"),
+        # UpperCase (macro style) -> others
+        (UpperCase, "HELLO_WORLD", SnakeCase, "hello_world"),
+        (UpperCase, "HELLO_WORLD", KebabCase, "hello-world"),
+        (UpperCase, "HELLO_WORLD", PascalCase, "HelloWorld"),
+        # FlatCase -> others
+        (FlatCase, "helloworld", SnakeCase, "helloworld"),
+        (FlatCase, "helloworld", PascalCase, "Helloworld"),
+    ],
+)
+def test_cross_case_conversion(start_cls, input_str, target_cls, expected):
+    """Ensure converting between different cases works as expected."""
+    converted = target_cls(start_cls(input_str))
+    assert str(converted) == expected
