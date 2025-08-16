@@ -3,10 +3,8 @@ from .base import BaseCase
 
 class CamelSnakeCase(BaseCase):
     def _split_into_words(self, text: str) -> list[str]:
-        import re
-
-        # Split on common separators: underscore, hyphen, dot, slash, backslash, space
-        words = re.split(r"[_\-\.,\/\\\s]+", text)
+        # Split on _
+        words = text.lower().split("_")
         return [word.lower() for word in words if word.strip()]
 
     def __str__(self) -> str:
