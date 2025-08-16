@@ -38,6 +38,7 @@ from magic_case import (
         (MacroCase, "hello_world", ["hello", "world"], "HELLO_WORLD"),
         (PascalSnakeCase, "Hello_World", ["hello", "world"], "Hello_World"),
         (PathCase, "hello/world", ["hello", "world"], "hello/world"),
+        (PathCase, "hello", ["hello"], "hello"),
         (SlashTitleCase, "hello/world", ["hello", "world"], "Hello/World"),
     ],
 )
