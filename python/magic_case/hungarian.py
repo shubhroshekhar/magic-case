@@ -6,6 +6,8 @@ HUNGARIAN_PREFIXES = ["str", "lst", "arr", "psz", "i", "b", "d", "f", "ch", "n",
 
 
 class HungarianCase(BaseCase):
+    prefix: str | None = None
+
     def _split_into_words(self, text: str) -> list[str]:
         """
         Split a Hungarian Notation variable into words.

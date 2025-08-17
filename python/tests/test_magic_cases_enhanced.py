@@ -6,6 +6,7 @@ from magic_case import (
     DotCase,
     FlatCase,
     HttpHeaderCase,
+    HungarianCase,
     KebabCase,
     MacroCase,
     PascalCase,
@@ -304,6 +305,8 @@ def test_non_string_word_raises():
         (SnakeCase, "hello_world", TitleCase, "Hello World"),
         (SnakeCase, "hello_world", UpperCase, "HELLO_WORLD"),
         (SnakeCase, "hello_world", DotCase, "hello.world"),
+        (SnakeCase, "str_hello_world", HungarianCase, "strHelloWorld"),
+        (SnakeCase, "hello_world", HungarianCase, "helloWorld"),
         # KebabCase -> others
         (KebabCase, "hello-world", SnakeCase, "hello_world"),
         (KebabCase, "hello-world", PascalCase, "HelloWorld"),
@@ -333,6 +336,13 @@ def test_non_string_word_raises():
         # FlatCase -> others
         (FlatCase, "helloworld", SnakeCase, "helloworld"),
         (FlatCase, "helloworld", PascalCase, "Helloworld"),
+        # HungarianCase -> others
+        (HungarianCase, "strHelloWorld", SnakeCase, "hello_world"),
+        (HungarianCase, "strHelloWorld", KebabCase, "hello-world"),
+        (HungarianCase, "strHelloWorld", CamelCase, "helloWorld"),
+        (HungarianCase, "strHelloWorld", PascalCase, "HelloWorld"),
+        (HungarianCase, "strHelloWorld", TitleCase, "Hello World"),
+        (HungarianCase, "strHelloWorld", UpperCase, "HELLO_WORLD"),
     ],
 )
 def test_cross_case_conversion(start_cls, input_str, target_cls, expected):

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "magic-case"
-version = "0.3.1"
+version = "0.3.2"
 description = "Lightweight utilities for converting strings between common cases"
 readme = "README.md"
 requires-python = ">=3.9"
