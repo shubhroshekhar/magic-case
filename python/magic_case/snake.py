@@ -6,4 +6,4 @@ class SnakeCase(BaseCase):
         return text.lower().split("_")
 
     def __str__(self) -> str:
-        return "_".join(self.words)
+        return "_".join(self.words).lower()

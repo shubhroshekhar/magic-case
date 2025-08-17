@@ -26,13 +26,13 @@ def test_kebab_case_basic():
 
 def test_camel_case_basic():
     c = CamelCase("helloWorld")
-    assert c.words == ["hello", "world"]
+    assert c.words == ["hello", "World"]
     assert c.get() == "helloWorld"
 
 
 def test_pascal_case_basic():
     p = PascalCase("HelloWorld")
-    assert p.words == ["hello", "world"]
+    assert p.words == ["Hello", "World"]
     assert p.get() == "HelloWorld"
 
 

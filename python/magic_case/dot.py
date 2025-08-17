@@ -16,4 +16,4 @@ class DotCase(BaseCase):
         return text.lower().split(".")
 
     def __str__(self) -> str:
-        return ".".join(self.words)
+        return ".".join(self.words).lower()
