@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 
 from .base import BaseCase
 
@@ -6,6 +7,8 @@ HUNGARIAN_PREFIXES = ["str", "lst", "arr", "psz", "i", "b", "d", "f", "ch", "n",
 
 
 class HungarianCase(BaseCase):
+    prefix: Optional[str] = None
+
     def _split_into_words(self, text: str) -> list[str]:
         """
         Split a Hungarian Notation variable into words.
