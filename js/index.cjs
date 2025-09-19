@@ -343,7 +343,84 @@ class SlashTitleCase extends BaseCase {
 }
 
 // Export all classes
-export {
+
+
+// Convenience functions for direct usage
+function toUpperCase(text) {
+  return new UpperCase(text).toString();
+}
+
+function toLowerCase(text) {
+  return new LowerCase(text).toString();
+}
+
+function toCamelCase(text) {
+  return new CamelCase(text).toString();
+}
+
+function toPascalCase(text) {
+  return new PascalCase(text).toString();
+}
+
+function toSnakeCase(text) {
+  return new SnakeCase(text).toString();
+}
+
+function toKebabCase(text) {
+  return new KebabCase(text).toString();
+}
+
+function toTitleCase(text) {
+  return new TitleCase(text).toString();
+}
+
+function toSentenceCase(text) {
+  return new SentenceCase(text).toString();
+}
+
+function toDotCase(text) {
+  return new DotCase(text).toString();
+}
+
+function toSpaceCase(text) {
+  return new SpaceCase(text).toString();
+}
+
+function toFlatCase(text) {
+  return new FlatCase(text).toString();
+}
+
+function toHttpHeaderCase(text) {
+  return new HttpHeaderCase(text).toString();
+}
+
+function toCamelSnakeCase(text) {
+  return new CamelSnakeCase(text).toString();
+}
+
+function toHungarianCase(text) {
+  return new HungarianCase(text).toString();
+}
+
+function toMacroCase(text) {
+  return new MacroCase(text).toString();
+}
+
+function toPascalSnakeCase(text) {
+  return new PascalSnakeCase(text).toString();
+}
+
+function toPathCase(text) {
+  return new PathCase(text).toString();
+}
+
+function toSlashTitleCase(text) {
+  return new SlashTitleCase(text).toString();
+}
+
+
+// CommonJS exports
+module.exports = {
   BaseCase,
   SnakeCase,
   CamelCase,
@@ -363,77 +440,22 @@ export {
   PascalSnakeCase,
   PathCase,
   SlashTitleCase,
+  toUpperCase,
+  toLowerCase,
+  toCamelCase,
+  toPascalCase,
+  toSnakeCase,
+  toKebabCase,
+  toTitleCase,
+  toSentenceCase,
+  toDotCase,
+  toSpaceCase,
+  toFlatCase,
+  toHttpHeaderCase,
+  toCamelSnakeCase,
+  toHungarianCase,
+  toMacroCase,
+  toPascalSnakeCase,
+  toPathCase,
+  toSlashTitleCase,
 };
-
-// Convenience functions for direct usage
-export function toUpperCase(text) {
-  return new UpperCase(text).toString();
-}
-
-export function toLowerCase(text) {
-  return new LowerCase(text).toString();
-}
-
-export function toCamelCase(text) {
-  return new CamelCase(text).toString();
-}
-
-export function toPascalCase(text) {
-  return new PascalCase(text).toString();
-}
-
-export function toSnakeCase(text) {
-  return new SnakeCase(text).toString();
-}
-
-export function toKebabCase(text) {
-  return new KebabCase(text).toString();
-}
-
-export function toTitleCase(text) {
-  return new TitleCase(text).toString();
-}
-
-export function toSentenceCase(text) {
-  return new SentenceCase(text).toString();
-}
-
-export function toDotCase(text) {
-  return new DotCase(text).toString();
-}
-
-export function toSpaceCase(text) {
-  return new SpaceCase(text).toString();
-}
-
-export function toFlatCase(text) {
-  return new FlatCase(text).toString();
-}
-
-export function toHttpHeaderCase(text) {
-  return new HttpHeaderCase(text).toString();
-}
-
-export function toCamelSnakeCase(text) {
-  return new CamelSnakeCase(text).toString();
-}
-
-export function toHungarianCase(text) {
-  return new HungarianCase(text).toString();
-}
-
-export function toMacroCase(text) {
-  return new MacroCase(text).toString();
-}
-
-export function toPascalSnakeCase(text) {
-  return new PascalSnakeCase(text).toString();
-}
-
-export function toPathCase(text) {
-  return new PathCase(text).toString();
-}
-
-export function toSlashTitleCase(text) {
-  return new SlashTitleCase(text).toString();
-}
