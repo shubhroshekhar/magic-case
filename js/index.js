@@ -67,7 +67,7 @@ class CamelCase extends BaseCase {
     // Accept any input and normalize
     const normalized = text
       .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-      .replace(/[_\-.\/\\\s]+/g, ' ');
+      .replace(/[-_.\s]+|\/+/g, ' ');
     return normalized.split(' ').filter(Boolean).map(w => w.toLowerCase());
   }
 
@@ -85,7 +85,7 @@ class PascalCase extends BaseCase {
   _splitIntoWords(text) {
     const normalized = text
       .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-      .replace(/[_\-.\/\\\s]+/g, ' ');
+      .replace(/[-_.\s]+|\/+/g, ' ');
     return normalized.split(' ').filter(Boolean).map(w => w.toLowerCase());
   }
 
@@ -117,7 +117,7 @@ class SnakeCase extends BaseCase {
  */
 class KebabCase extends BaseCase {
   _splitIntoWords(text) {
-    const normalized = text.replace(/[_\./\\\s]+/g, ' ');
+    const normalized = text.replace(/[_.\s]+|\/+/g, ' ');
     const parts = (normalized.match(/[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])/g) || []);
     return parts.map(w => w.toLowerCase());
   }
@@ -168,7 +168,7 @@ class DotCase extends BaseCase {
   _splitIntoWords(text) {
     const normalized = text
       .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-      .replace(/[_\-/\\\s.]+/g, ' ');
+      .replace(/[-_.\s]+|\/+/g, ' ');
     return normalized.split(' ').filter(Boolean).map(w => w.toLowerCase());
   }
 
@@ -184,7 +184,7 @@ class SpaceCase extends BaseCase {
   _splitIntoWords(text) {
     const normalized = text
       .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-      .replace(/[_\-.\/\\\s]+/g, ' ');
+      .replace(/[-_.\s]+|\/+/g, ' ');
     return normalized.split(' ').filter(Boolean).map(w => w.toLowerCase());
   }
 
@@ -198,7 +198,7 @@ class SpaceCase extends BaseCase {
  */
 class FlatCase extends BaseCase {
   _splitIntoWords(text) {
-    const words = text.split(/[._\/\\\s-]+/);
+      const words = text.split(/[._\s-]+|\/+/);
     return words.filter(word => word.trim()).map(word => word.toLowerCase());
   }
 
@@ -286,7 +286,7 @@ class HungarianCase extends BaseCase {
  */
 class MacroCase extends BaseCase {
   _splitIntoWords(text) {
-    const words = text.split(/[._\/\s-]+/);
+    const words = text.split(/[._\s-]+|\/+/);
     return words.filter(word => word.trim()).map(word => word.toLowerCase());
   }
 
@@ -300,7 +300,7 @@ class MacroCase extends BaseCase {
  */
 class PascalSnakeCase extends BaseCase {
   _splitIntoWords(text) {
-    const words = text.split(/[._\/\s-]+/);
+    const words = text.split(/[._\s-]+|\/+/);
     return words.filter(word => word.trim()).map(word => word.toLowerCase());
   }
 
