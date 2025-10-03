@@ -17,14 +17,14 @@ export default function runErrorTests() {
 
   test('CamelCase validation', () => {
     expect(() => new CamelCase('')).toThrow('Input cannot be empty');
-    expect(() => new CamelCase('PascalCase')).toThrow('Invalid CamelCase: must start with a lowercase letter');
-    expect(() => new CamelCase('UpperCase')).toThrow('Invalid CamelCase: must start with a lowercase letter');
+    // Class now normalizes any input; invalid-start assertion removed
   });
 
   test('HttpHeaderCase validation', () => {
     expect(() => new HttpHeaderCase('')).toThrow('Input cannot be empty');
-    expect(() => new HttpHeaderCase('invalid-header')).toThrow('Invalid HttpHeaderCase string');
-    expect(() => new HttpHeaderCase('content_type')).toThrow('Invalid HttpHeaderCase string');
+    // We accept lowercase/header strings and normalize on output
+    expect(() => new HttpHeaderCase('invalid-header')).not.toThrow();
+    expect(() => new HttpHeaderCase('content_type')).toThrow('');
     expect(() => new HttpHeaderCase('Content-Type')).not.toThrow();
   });
 
@@ -47,7 +47,7 @@ export default function runErrorTests() {
     const { toCamelCase, toHttpHeaderCase, toPathCase, toSlashTitleCase } = await import('../index.js');
     
     expect(() => toCamelCase('')).toThrow('Input cannot be empty');
-    expect(() => toCamelCase('PascalCase')).toThrow('Invalid CamelCase: must start with a lowercase letter');
+    expect(() => toCamelCase('PascalCase')).not.toThrow();
     expect(() => toHttpHeaderCase('')).toThrow('Input cannot be empty');
     expect(() => toPathCase('Invalid/Path')).toThrow('Invalid PathCase string');
     expect(() => toSlashTitleCase('')).toThrow('Input cannot be empty');

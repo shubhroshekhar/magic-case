@@ -16,12 +16,30 @@ class TestRunner {
   }
 
   test(name, fn) {
-    this.tests.push({ name, fn });
+    // Execute tests immediately so assertions run and counters update
+    try {
+      const result = fn();
+      // Support async tests
+      if (result && typeof result.then === 'function') {
+        return result.then(() => {
+          // Per-assertion counters are updated in expect()
+          console.log(`  ✅ ${name}`);
+        }).catch((error) => {
+          console.log(`  ❌ ${name}: ${error.message}`);
+          this.failed++;
+        });
+      }
+      console.log(`  ✅ ${name}`);
+    } catch (error) {
+      console.log(`  ❌ ${name}: ${error.message}`);
+      this.failed++;
+    }
   }
 
   describe(name, fn) {
     console.log(`\n📁 ${name}`);
-    fn();
+    const maybePromise = fn();
+    return maybePromise;
   }
 
   expect(actual) {
@@ -32,6 +50,16 @@ class TestRunner {
           this.passed++;
         } else {
           console.log(`  ❌ Expected ${expected}, got ${actual}`);
+          this.failed++;
+        }
+      },
+      toEqual: (expected) => {
+        const pass = JSON.stringify(actual) === JSON.stringify(expected);
+        if (pass) {
+          console.log(`  ✅ ${JSON.stringify(actual)} == ${JSON.stringify(expected)}`);
+          this.passed++;
+        } else {
+          console.log(`  ❌ Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
           this.failed++;
         }
       },
@@ -47,6 +75,18 @@ class TestRunner {
           } else {
             console.log(`  ✅ Function threw as expected: ${error.message}`);
             this.passed++;
+          }
+        }
+      },
+      not: {
+        toThrow: () => {
+          try {
+            actual();
+            console.log(`  ✅ Function did not throw as expected`);
+            this.passed++;
+          } catch (error) {
+            console.log(`  ❌ Expected function not to throw, but it threw: ${error.message}`);
+            this.failed++;
           }
         }
       }
@@ -66,14 +106,14 @@ class TestRunner {
       
       // Run the tests in the module
       if (testModule.default) {
-        testModule.default();
+        await testModule.default();
       }
       
       // Also run any exported functions that might be tests
       for (const [name, fn] of Object.entries(testModule)) {
         if (typeof fn === 'function' && name !== 'default') {
           try {
-            fn();
+            await fn();
           } catch (error) {
             console.log(`  ❌ Error in ${name}: ${error.message}`);
             this.failed++;

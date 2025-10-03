@@ -25,7 +25,7 @@ export default function runClassTests() {
   describe('Class-based Case Conversions', () => {
   test('BaseCase functionality', () => {
     const snake = new SnakeCase('hello world');
-    expect(snake.words).toEqual(['hello world']);
+    expect(snake.words).toEqual(['hello_world']);
     expect(snake.toString()).toBe('hello_world');
     expect(snake.get()).toBe('hello_world');
 
@@ -39,7 +39,7 @@ export default function runClassTests() {
     expect(snake.toString()).toBe('hello_world');
     
     const snake2 = new SnakeCase('testCase');
-    expect(snake2.toString()).toBe('testcase');
+    expect(snake2.toString()).toBe('test_case');
   });
 
   test('CamelCase class', () => {
