@@ -8,10 +8,12 @@ class BaseCase {
     } else if (textOrObj instanceof BaseCase) {
       this.words = textOrObj.words;
     } else {
-      throw new TypeError('BaseCase expects a string or another BaseCase instance');
+      throw new TypeError(
+        'BaseCase expects a string or another BaseCase instance'
+      );
     }
 
-    if (!this.words.every(word => typeof word === 'string')) {
+    if (!this.words.every((word) => typeof word === 'string')) {
       throw new Error('All words must be strings');
     }
   }
@@ -66,13 +68,20 @@ class CamelCase extends BaseCase {
 
     // Split on common separators: underscore, hyphen, dot, slash, backslash, space
     const words = text.split(/[_\-\.,\/\\\s]+/);
-    return words.filter(word => word.trim()).map(word => word.toLowerCase());
+    return words
+      .filter((word) => word.trim())
+      .map((word) => word.toLowerCase());
   }
 
   toString() {
     if (this.words.length === 0) return '';
     const [first, ...rest] = this.words;
-    return first.toLowerCase() + rest.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('');
+    return (
+      first.toLowerCase() +
+      rest
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join('')
+    );
   }
 }
 
@@ -83,11 +92,15 @@ class PascalCase extends BaseCase {
   _splitIntoWords(text) {
     // Split on common separators: underscore, hyphen, dot, slash, backslash, space
     const words = text.split(/[_\-\.,\/\\\s]+/);
-    return words.filter(word => word.trim()).map(word => word.toLowerCase());
+    return words
+      .filter((word) => word.trim())
+      .map((word) => word.toLowerCase());
   }
 
   toString() {
-    return this.words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
+    return this.words
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('');
   }
 }
 
@@ -98,7 +111,9 @@ class SnakeCase extends BaseCase {
   _splitIntoWords(text) {
     // Split on common separators: underscore, hyphen, dot, slash, backslash, space
     const words = text.split(/[_\-\.,\/\\\s]+/);
-    return words.filter(word => word.trim()).map(word => word.toLowerCase());
+    return words
+      .filter((word) => word.trim())
+      .map((word) => word.toLowerCase());
   }
 
   toString() {
@@ -113,7 +128,9 @@ class KebabCase extends BaseCase {
   _splitIntoWords(text) {
     // Split on common separators: underscore, hyphen, dot, slash, backslash, space
     const words = text.split(/[_\-\.,\/\\\s]+/);
-    return words.filter(word => word.trim()).map(word => word.toLowerCase());
+    return words
+      .filter((word) => word.trim())
+      .map((word) => word.toLowerCase());
   }
 
   toString() {
@@ -130,7 +147,9 @@ class TitleCase extends BaseCase {
   }
 
   toString() {
-    return this.words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    return this.words
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
 }
 
@@ -167,7 +186,9 @@ class DotCase extends BaseCase {
 class SpaceCase extends BaseCase {
   _splitIntoWords(text) {
     const words = text.split(' ');
-    return words.filter(word => word.trim()).map(word => word.toLowerCase());
+    return words
+      .filter((word) => word.trim())
+      .map((word) => word.toLowerCase());
   }
 
   toString() {
@@ -181,7 +202,9 @@ class SpaceCase extends BaseCase {
 class FlatCase extends BaseCase {
   _splitIntoWords(text) {
     const words = text.split(/[_\-\.,\/\\\s]+/);
-    return words.filter(word => word.trim()).map(word => word.toLowerCase());
+    return words
+      .filter((word) => word.trim())
+      .map((word) => word.toLowerCase());
   }
 
   toString() {
@@ -207,7 +230,9 @@ class HttpHeaderCase extends BaseCase {
   }
 
   toString() {
-    return this.words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('-');
+    return this.words
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('-');
   }
 }
 
@@ -217,14 +242,17 @@ class HttpHeaderCase extends BaseCase {
 class CamelSnakeCase extends BaseCase {
   _splitIntoWords(text) {
     // Split on underscores or camel humps
-    const words = text.replace(/_/g, ' ').match(/[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])/g) || [];
-    return words.filter(word => word).map(word => word.toLowerCase());
+    const words =
+      text.replace(/_/g, ' ').match(/[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])/g) || [];
+    return words.filter((word) => word).map((word) => word.toLowerCase());
   }
 
   toString() {
     if (this.words.length === 0) return '';
     const first = this.words[0].toLowerCase();
-    const rest = this.words.slice(1).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+    const rest = this.words
+      .slice(1)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
     return [first, ...rest].join('_');
   }
 }
@@ -239,11 +267,25 @@ class HungarianCase extends BaseCase {
   }
 
   _splitIntoWords(text) {
-    const HUNGARIAN_PREFIXES = ['str', 'lst', 'arr', 'psz', 'i', 'b', 'd', 'f', 'ch', 'n', 'p'];
-    
+    const HUNGARIAN_PREFIXES = [
+      'str',
+      'lst',
+      'arr',
+      'psz',
+      'i',
+      'b',
+      'd',
+      'f',
+      'ch',
+      'n',
+      'p',
+    ];
+
     // Detect Hungarian prefix
     this.prefix = null;
-    for (const prefix of HUNGARIAN_PREFIXES.sort((a, b) => b.length - a.length)) {
+    for (const prefix of HUNGARIAN_PREFIXES.sort(
+      (a, b) => b.length - a.length
+    )) {
       if (text.startsWith(prefix)) {
         this.prefix = prefix;
         text = text.slice(prefix.length);
@@ -253,18 +295,32 @@ class HungarianCase extends BaseCase {
 
     // Now split CamelCase / PascalCase
     const words = text.replace(/([a-z0-9])([A-Z])/g, '$1 $2').split(/\s+/);
-    return words.filter(word => word).map(word => word.toLowerCase());
+    return words.filter((word) => word).map((word) => word.toLowerCase());
   }
 
   toString() {
     if (this.words.length === 0) return '';
 
     if (this.prefix) {
-      return this.prefix + this.words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
+      return (
+        this.prefix +
+        this.words
+          .map(
+            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+          )
+          .join('')
+      );
     }
 
     const [first, ...rest] = this.words;
-    return first + rest.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
+    return (
+      first +
+      rest
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join('')
+    );
   }
 }
 
@@ -274,7 +330,9 @@ class HungarianCase extends BaseCase {
 class MacroCase extends BaseCase {
   _splitIntoWords(text) {
     const words = text.split(/[_\-\.,\/\\\s]+/);
-    return words.filter(word => word.trim()).map(word => word.toLowerCase());
+    return words
+      .filter((word) => word.trim())
+      .map((word) => word.toLowerCase());
   }
 
   toString() {
@@ -288,11 +346,15 @@ class MacroCase extends BaseCase {
 class PascalSnakeCase extends BaseCase {
   _splitIntoWords(text) {
     const words = text.split(/[_\-\.,\/\\\s]+/);
-    return words.filter(word => word.trim()).map(word => word.toLowerCase());
+    return words
+      .filter((word) => word.trim())
+      .map((word) => word.toLowerCase());
   }
 
   toString() {
-    return this.words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('_');
+    return this.words
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('_');
   }
 }
 
@@ -324,26 +386,31 @@ class SlashTitleCase extends BaseCase {
     }
 
     if (text.startsWith('/') || text.endsWith('/')) {
-      throw new Error(`Invalid SlashTitleCase: cannot start or end with slash → ${text}`);
+      throw new Error(
+        `Invalid SlashTitleCase: cannot start or end with slash → ${text}`
+      );
     }
 
     const words = text.split('/');
 
     // Check for consecutive slashes → empty segments
-    if (words.some(word => !word.trim())) {
-      throw new Error(`Invalid SlashTitleCase: consecutive slashes not allowed → ${text}`);
+    if (words.some((word) => !word.trim())) {
+      throw new Error(
+        `Invalid SlashTitleCase: consecutive slashes not allowed → ${text}`
+      );
     }
 
     return words;
   }
 
   toString() {
-    return this.words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('/');
+    return this.words
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('/');
   }
 }
 
 // Export all classes
-
 
 // Convenience functions for direct usage
 function toUpperCase(text) {
@@ -417,7 +484,6 @@ function toPathCase(text) {
 function toSlashTitleCase(text) {
   return new SlashTitleCase(text).toString();
 }
-
 
 // CommonJS exports
 module.exports = {

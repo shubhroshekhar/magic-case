@@ -12,7 +12,9 @@ const rootDir = join(__dirname, '..');
 console.log('🚀 Releasing magic-case...');
 
 // Read current version
-const packageJson = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'));
+const packageJson = JSON.parse(
+  readFileSync(join(rootDir, 'package.json'), 'utf8')
+);
 const currentVersion = packageJson.version;
 
 console.log(`Current version: ${currentVersion}`);
@@ -26,7 +28,9 @@ if (!newVersion) {
 
 // Validate version format
 if (!/^\d+\.\d+\.\d+$/.test(newVersion)) {
-  console.error('❌ Invalid version format. Use semantic versioning (e.g., 1.0.0)');
+  console.error(
+    '❌ Invalid version format. Use semantic versioning (e.g., 1.0.0)'
+  );
   process.exit(1);
 }
 
@@ -52,7 +56,10 @@ try {
   // Create git tag
   console.log('🏷️  Creating git tag...');
   execSync(`git add .`, { cwd: rootDir, stdio: 'inherit' });
-  execSync(`git commit -m "Release v${newVersion}"`, { cwd: rootDir, stdio: 'inherit' });
+  execSync(`git commit -m "Release v${newVersion}"`, {
+    cwd: rootDir,
+    stdio: 'inherit',
+  });
   execSync(`git tag v${newVersion}`, { cwd: rootDir, stdio: 'inherit' });
 
   // Publish to npm
@@ -62,11 +69,13 @@ try {
   // Push to git
   console.log('📤 Pushing to git...');
   execSync('git push origin main', { cwd: rootDir, stdio: 'inherit' });
-  execSync(`git push origin v${newVersion}`, { cwd: rootDir, stdio: 'inherit' });
+  execSync(`git push origin v${newVersion}`, {
+    cwd: rootDir,
+    stdio: 'inherit',
+  });
 
   console.log('✅ Release completed successfully!');
   console.log(`🎉 magic-case v${newVersion} is now available on npm!`);
-
 } catch (error) {
   console.error('❌ Release failed:', error.message);
   process.exit(1);

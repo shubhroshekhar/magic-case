@@ -21,13 +21,15 @@ class TestRunner {
       const result = fn();
       // Support async tests
       if (result && typeof result.then === 'function') {
-        return result.then(() => {
-          // Per-assertion counters are updated in expect()
-          console.log(`  ✅ ${name}`);
-        }).catch((error) => {
-          console.log(`  ❌ ${name}: ${error.message}`);
-          this.failed++;
-        });
+        return result
+          .then(() => {
+            // Per-assertion counters are updated in expect()
+            console.log(`  ✅ ${name}`);
+          })
+          .catch((error) => {
+            console.log(`  ❌ ${name}: ${error.message}`);
+            this.failed++;
+          });
       }
       console.log(`  ✅ ${name}`);
     } catch (error) {
@@ -56,10 +58,14 @@ class TestRunner {
       toEqual: (expected) => {
         const pass = JSON.stringify(actual) === JSON.stringify(expected);
         if (pass) {
-          console.log(`  ✅ ${JSON.stringify(actual)} == ${JSON.stringify(expected)}`);
+          console.log(
+            `  ✅ ${JSON.stringify(actual)} == ${JSON.stringify(expected)}`
+          );
           this.passed++;
         } else {
-          console.log(`  ❌ Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+          console.log(
+            `  ❌ Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`
+          );
           this.failed++;
         }
       },
@@ -70,7 +76,9 @@ class TestRunner {
           this.failed++;
         } catch (error) {
           if (expectedError && !error.message.includes(expectedError)) {
-            console.log(`  ❌ Expected error containing "${expectedError}", got "${error.message}"`);
+            console.log(
+              `  ❌ Expected error containing "${expectedError}", got "${error.message}"`
+            );
             this.failed++;
           } else {
             console.log(`  ✅ Function threw as expected: ${error.message}`);
@@ -85,11 +93,13 @@ class TestRunner {
             console.log(`  ✅ Function did not throw as expected`);
             this.passed++;
           } catch (error) {
-            console.log(`  ❌ Expected function not to throw, but it threw: ${error.message}`);
+            console.log(
+              `  ❌ Expected function not to throw, but it threw: ${error.message}`
+            );
             this.failed++;
           }
-        }
-      }
+        },
+      },
     };
   }
 
@@ -98,17 +108,19 @@ class TestRunner {
 
     // Load all test files
     const testDir = join(__dirname);
-    const testFiles = readdirSync(testDir).filter(file => file.endsWith('.test.js') && file !== 'run-tests.js');
+    const testFiles = readdirSync(testDir).filter(
+      (file) => file.endsWith('.test.js') && file !== 'run-tests.js'
+    );
 
     for (const file of testFiles) {
       console.log(`\n📄 Running ${file}...`);
       const testModule = await import(join(testDir, file));
-      
+
       // Run the tests in the module
       if (testModule.default) {
         await testModule.default();
       }
-      
+
       // Also run any exported functions that might be tests
       for (const [name, fn] of Object.entries(testModule)) {
         if (typeof fn === 'function' && name !== 'default') {

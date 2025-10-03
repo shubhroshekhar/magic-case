@@ -27,9 +27,9 @@ npm install magic-case
 ```javascript
 import { toCamelCase, toSnakeCase, toKebabCase } from 'magic-case';
 
-console.log(toCamelCase('hello world'));    // helloWorld
-console.log(toSnakeCase('camelCase'));      // camel_case
-console.log(toKebabCase('PascalCase'));     // pascal-case
+console.log(toCamelCase('hello world')); // helloWorld
+console.log(toSnakeCase('camelCase')); // camel_case
+console.log(toKebabCase('PascalCase')); // pascal-case
 ```
 
 ### Class-based API (Advanced)
@@ -38,38 +38,38 @@ console.log(toKebabCase('PascalCase'));     // pascal-case
 import { CamelCase, SnakeCase, KebabCase } from 'magic-case';
 
 const camel = new CamelCase('hello world');
-console.log(camel.toString());  // helloWorld
+console.log(camel.toString()); // helloWorld
 
 const snake = new SnakeCase('camelCase');
-console.log(snake.toString());  // camel_case
+console.log(snake.toString()); // camel_case
 
 // Chain transformations
 const kebab = new KebabCase(snake);
-console.log(kebab.toString());  // camel-case
+console.log(kebab.toString()); // camel-case
 ```
 
 ## 🎨 Available Case Styles
 
-| Style | Function | Class | Example |
-|-------|----------|-------|---------|
-| **UPPERCASE** | `toUpperCase()` | `UpperCase` | `HELLO WORLD` |
-| **lowercase** | `toLowerCase()` | `LowerCase` | `hello world` |
-| **camelCase** | `toCamelCase()` | `CamelCase` | `helloWorld` |
-| **PascalCase** | `toPascalCase()` | `PascalCase` | `HelloWorld` |
-| **snake_case** | `toSnakeCase()` | `SnakeCase` | `hello_world` |
-| **kebab-case** | `toKebabCase()` | `KebabCase` | `hello-world` |
-| **Title Case** | `toTitleCase()` | `TitleCase` | `Hello World` |
-| **Sentence case** | `toSentenceCase()` | `SentenceCase` | `Hello world` |
-| **dot.case** | `toDotCase()` | `DotCase` | `hello.world` |
-| **space case** | `toSpaceCase()` | `SpaceCase` | `hello world` |
-| **flatcase** | `toFlatCase()` | `FlatCase` | `helloworld` |
-| **HTTP-Header-Case** | `toHttpHeaderCase()` | `HttpHeaderCase` | `Content-Type` |
-| **camel_snake_case** | `toCamelSnakeCase()` | `CamelSnakeCase` | `hello_world` |
-| **HungarianCase** | `toHungarianCase()` | `HungarianCase` | `strUserName` |
-| **MACRO_CASE** | `toMacroCase()` | `MacroCase` | `HELLO_WORLD` |
-| **Pascal_Snake_Case** | `toPascalSnakeCase()` | `PascalSnakeCase` | `Hello_World` |
-| **path/case** | `toPathCase()` | `PathCase` | `api/users` |
-| **Slash/Title/Case** | `toSlashTitleCase()` | `SlashTitleCase` | `Hello/World` |
+| Style                 | Function              | Class             | Example        |
+| --------------------- | --------------------- | ----------------- | -------------- |
+| **UPPERCASE**         | `toUpperCase()`       | `UpperCase`       | `HELLO WORLD`  |
+| **lowercase**         | `toLowerCase()`       | `LowerCase`       | `hello world`  |
+| **camelCase**         | `toCamelCase()`       | `CamelCase`       | `helloWorld`   |
+| **PascalCase**        | `toPascalCase()`      | `PascalCase`      | `HelloWorld`   |
+| **snake_case**        | `toSnakeCase()`       | `SnakeCase`       | `hello_world`  |
+| **kebab-case**        | `toKebabCase()`       | `KebabCase`       | `hello-world`  |
+| **Title Case**        | `toTitleCase()`       | `TitleCase`       | `Hello World`  |
+| **Sentence case**     | `toSentenceCase()`    | `SentenceCase`    | `Hello world`  |
+| **dot.case**          | `toDotCase()`         | `DotCase`         | `hello.world`  |
+| **space case**        | `toSpaceCase()`       | `SpaceCase`       | `hello world`  |
+| **flatcase**          | `toFlatCase()`        | `FlatCase`        | `helloworld`   |
+| **HTTP-Header-Case**  | `toHttpHeaderCase()`  | `HttpHeaderCase`  | `Content-Type` |
+| **camel_snake_case**  | `toCamelSnakeCase()`  | `CamelSnakeCase`  | `hello_world`  |
+| **HungarianCase**     | `toHungarianCase()`   | `HungarianCase`   | `strUserName`  |
+| **MACRO_CASE**        | `toMacroCase()`       | `MacroCase`       | `HELLO_WORLD`  |
+| **Pascal_Snake_Case** | `toPascalSnakeCase()` | `PascalSnakeCase` | `Hello_World`  |
+| **path/case**         | `toPathCase()`        | `PathCase`        | `api/users`    |
+| **Slash/Title/Case**  | `toSlashTitleCase()`  | `SlashTitleCase`  | `Hello/World`  |
 
 ## 🖥️ CLI Usage
 
@@ -104,9 +104,9 @@ All functions accept a string and return the converted string:
 import { toCamelCase, toSnakeCase, toKebabCase } from 'magic-case';
 
 // Basic usage
-toCamelCase('hello world')     // 'helloWorld'
-toSnakeCase('camelCase')       // 'camel_case'
-toKebabCase('PascalCase')      // 'pascal-case'
+toCamelCase('hello world'); // 'helloWorld'
+toSnakeCase('camelCase'); // 'camel_case'
+toKebabCase('PascalCase'); // 'pascal-case'
 ```
 
 ### Class-based API
@@ -121,15 +121,15 @@ const camel = new CamelCase('hello world');
 const snake = new SnakeCase('camelCase');
 
 // Convert to string
-console.log(camel.toString());  // 'helloWorld'
-console.log(snake.toString());  // 'camel_case'
+console.log(camel.toString()); // 'helloWorld'
+console.log(snake.toString()); // 'camel_case'
 
 // Chain transformations
 const kebab = new KebabCase(snake);
-console.log(kebab.toString());  // 'camel-case'
+console.log(kebab.toString()); // 'camel-case'
 
 // Access words array
-console.log(camel.words);       // ['hello', 'world']
+console.log(camel.words); // ['hello', 'world']
 ```
 
 ### Error Handling
@@ -141,16 +141,16 @@ import { CamelCase, HttpHeaderCase } from 'magic-case';
 
 // CamelCase must start with lowercase
 try {
-  new CamelCase('PascalCase');  // Throws error
+  new CamelCase('PascalCase'); // Throws error
 } catch (error) {
-  console.log(error.message);   // "Invalid CamelCase: must start with a lowercase letter"
+  console.log(error.message); // "Invalid CamelCase: must start with a lowercase letter"
 }
 
 // HttpHeaderCase must match specific format
 try {
-  new HttpHeaderCase('invalid-header');  // Throws error
+  new HttpHeaderCase('invalid-header'); // Throws error
 } catch (error) {
-  console.log(error.message);   // "Invalid HttpHeaderCase string"
+  console.log(error.message); // "Invalid HttpHeaderCase string"
 }
 ```
 
@@ -158,10 +158,13 @@ try {
 
 ```html
 <script type="module">
-  import { toCamelCase, toSnakeCase } from 'https://unpkg.com/magic-case@latest/index.js';
-  
-  console.log(toCamelCase('hello world'));  // helloWorld
-  console.log(toSnakeCase('camelCase'));    // camel_case
+  import {
+    toCamelCase,
+    toSnakeCase,
+  } from 'https://unpkg.com/magic-case@latest/index.js';
+
+  console.log(toCamelCase('hello world')); // helloWorld
+  console.log(toSnakeCase('camelCase')); // camel_case
 </script>
 ```
 

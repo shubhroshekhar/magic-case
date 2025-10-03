@@ -14,12 +14,13 @@ console.log('🔨 Building magic-case...');
 const esModuleContent = readFileSync(join(rootDir, 'index.js'), 'utf8');
 
 // Convert to CommonJS
-const commonJsContent = esModuleContent
-  .replace(/export class/g, 'class')
-  .replace(/export function/g, 'function')
-  .replace(/export \{[^}]+\};/g, '')
-  .replace(/export \{[^}]+\}/g, '')
-  + `
+const commonJsContent =
+  esModuleContent
+    .replace(/export class/g, 'class')
+    .replace(/export function/g, 'function')
+    .replace(/export \{[^}]+\};/g, '')
+    .replace(/export \{[^}]+\}/g, '') +
+  `
 
 // CommonJS exports
 module.exports = {

@@ -28,26 +28,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Read package.json for version info
-const packageJson = JSON.parse(readFileSync(join(__dirname, 'package.json'), 'utf8'));
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, 'package.json'), 'utf8')
+);
 
 const caseFunctions = {
-  'upper': toUpperCase,
-  'lower': toLowerCase,
-  'camel': toCamelCase,
-  'pascal': toPascalCase,
-  'snake': toSnakeCase,
-  'kebab': toKebabCase,
-  'title': toTitleCase,
-  'sentence': toSentenceCase,
-  'dot': toDotCase,
-  'space': toSpaceCase,
-  'flat': toFlatCase,
+  upper: toUpperCase,
+  lower: toLowerCase,
+  camel: toCamelCase,
+  pascal: toPascalCase,
+  snake: toSnakeCase,
+  kebab: toKebabCase,
+  title: toTitleCase,
+  sentence: toSentenceCase,
+  dot: toDotCase,
+  space: toSpaceCase,
+  flat: toFlatCase,
   'http-header': toHttpHeaderCase,
   'camel-snake': toCamelSnakeCase,
-  'hungarian': toHungarianCase,
-  'macro': toMacroCase,
+  hungarian: toHungarianCase,
+  macro: toMacroCase,
   'pascal-snake': toPascalSnakeCase,
-  'path': toPathCase,
+  path: toPathCase,
   'slash-title': toSlashTitleCase,
 };
 
