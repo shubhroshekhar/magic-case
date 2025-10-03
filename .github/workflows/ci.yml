@@ -73,11 +73,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: js/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run tests
         if: matrix.task == 'test'
@@ -89,7 +87,7 @@ jobs:
 
       - name: Run formatting check
         if: matrix.task == 'lint'
-        run: npm run format -- --check
+        run: npx prettier --check .
 
       - name: Build package
         if: matrix.task == 'build'
@@ -127,10 +125,11 @@ jobs:
         run: |
           cd js
           node -e "
-          const { toCamelCase, toSnakeCase } = require('./index.cjs');
-          console.log('JavaScript package test:');
-          console.log('  toCamelCase(\"hello world\"):', toCamelCase('hello world'));
-          console.log('  toSnakeCase(\"camelCase\"):', toSnakeCase('camelCase'));
+          import('./js/index.js').then(m => {
+            console.log('JavaScript package test:');
+            console.log('  toCamelCase(\\\"hello world\\\"):', m.toCamelCase('hello world'));
+            console.log('  toSnakeCase(\\\"camelCase\\\"):', m.toSnakeCase('camelCase'));
+          });
           "
 
       - name: Cross-platform compatibility test

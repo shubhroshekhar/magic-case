@@ -64,13 +64,13 @@ jobs:
 
       - name: Install dependencies
         working-directory: js
-        run: npm ci
+        run: npm install
 
       - name: Run tests with coverage
         working-directory: js
         run: |
           npm install --save-dev c8
-          npm test -- --coverage
+          npx c8 --reporter=lcov --reporter=text npm test
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
