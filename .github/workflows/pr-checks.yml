@@ -108,30 +108,38 @@ jobs:
               pull_number: context.issue.number
             });
             
-            const changedFiles = pr.changed_files;
+            // Get the list of changed files
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            
+            const changedFileNames = files.map(file => file.filename);
+            const changedFilesCount = pr.changed_files;
             const labels = [];
             
             // Add labels based on changed files
-            if (changedFiles.some(file => file.startsWith('python/'))) {
+            if (changedFileNames.some(file => file.startsWith('python/'))) {
               labels.push('python');
             }
-            if (changedFiles.some(file => file.startsWith('js/'))) {
+            if (changedFileNames.some(file => file.startsWith('js/'))) {
               labels.push('javascript');
             }
-            if (changedFiles.some(file => file.startsWith('.github/'))) {
+            if (changedFileNames.some(file => file.startsWith('.github/'))) {
               labels.push('ci');
             }
-            if (changedFiles.some(file => file.includes('test'))) {
+            if (changedFileNames.some(file => file.includes('test'))) {
               labels.push('tests');
             }
-            if (changedFiles.some(file => file.includes('README') || file.includes('docs'))) {
+            if (changedFileNames.some(file => file.includes('README') || file.includes('docs'))) {
               labels.push('documentation');
             }
             
-            // Add size label
-            if (changedFiles <= 5) {
+            // Add size label based on number of changed files
+            if (changedFilesCount <= 5) {
               labels.push('size/small');
-            } else if (changedFiles <= 15) {
+            } else if (changedFilesCount <= 15) {
               labels.push('size/medium');
             } else {
               labels.push('size/large');
