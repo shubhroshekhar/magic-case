@@ -1,0 +1,105 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.3.2)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (test without publishing)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+          cache-dependency-path: js/package-lock.json
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Validate version in package.json
+        working-directory: js
+        run: |
+          PROJECT_VERSION=$(node -p "require('./package.json').version")
+          if [ "$PROJECT_VERSION" != "${{ steps.version.outputs.version }}" ]; then
+            echo "Error: Version mismatch!"
+            echo "Tag version: ${{ steps.version.outputs.version }}"
+            echo "Project version: $PROJECT_VERSION"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        working-directory: js
+        run: npm ci
+
+      - name: Run tests
+        working-directory: js
+        run: npm test
+
+      - name: Run linting
+        working-directory: js
+        run: npm run lint
+
+      - name: Build package
+        working-directory: js
+        run: npm run build
+
+      - name: Verify package
+        working-directory: js
+        run: |
+          npm pack --dry-run
+          echo "Package contents:"
+          tar -tzf magic-case-*.tgz
+
+      - name: Publish to npm (Test)
+        if: github.event.inputs.dry_run == 'true'
+        working-directory: js
+        run: |
+          echo "DRY RUN: Would publish to npm"
+          echo "Package files:"
+          ls -la
+          echo "Would run: npm publish"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm
+        if: github.event.inputs.dry_run != 'true'
+        working-directory: js
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish Summary
+        run: |
+          echo "🎉 Package published successfully!"
+          echo "Version: ${{ steps.version.outputs.version }}"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "Published to: npm (dry run)"
+          else
+            echo "Published to: npm (https://www.npmjs.com/package/magic-case)"
+          fi

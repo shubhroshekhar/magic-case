@@ -1,0 +1,174 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+          cache-dependency-path: js/package-lock.json
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install Python dependencies
+        working-directory: python
+        run: |
+          uv sync --no-progress
+          uv add --dev sphinx sphinx-rtd-theme myst-parser
+
+      - name: Install JavaScript dependencies
+        working-directory: js
+        run: npm ci
+
+      - name: Build Python documentation
+        working-directory: python
+        run: |
+          # Create docs directory if it doesn't exist
+          mkdir -p docs
+          
+          # Generate API documentation
+          uv run sphinx-apidoc -o docs/source magic_case/
+          
+          # Create basic Sphinx configuration
+          cat > docs/conf.py << 'EOF'
+          import os
+          import sys
+          sys.path.insert(0, os.path.abspath('..'))
+          
+          project = 'magic-case'
+          copyright = '2025, Shubhro Shekhar'
+          author = 'Shubhro Shekhar'
+          release = '0.3.2'
+          
+          extensions = [
+              'sphinx.ext.autodoc',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.napoleon',
+              'myst_parser'
+          ]
+          
+          templates_path = ['_templates']
+          exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+          
+          html_theme = 'sphinx_rtd_theme'
+          html_static_path = ['_static']
+          EOF
+          
+          # Create index.rst
+          cat > docs/source/index.rst << 'EOF'
+          Welcome to magic-case's documentation!
+          =====================================
+          
+          .. toctree::
+             :maxdepth: 2
+             :caption: Contents:
+          
+             api
+          
+          Indices and tables
+          ==================
+          
+          * :ref:`genindex`
+          * :ref:`modindex`
+          * :ref:`search`
+          EOF
+          
+          # Create API documentation
+          cat > docs/source/api.rst << 'EOF'
+          API Reference
+          ============
+          
+          .. automodule:: magic_case
+             :members:
+             :undoc-members:
+             :show-inheritance:
+          EOF
+          
+          # Build documentation
+          cd docs
+          uv run sphinx-build -b html source _build/html
+
+      - name: Build JavaScript documentation
+        working-directory: js
+        run: |
+          # Install JSDoc
+          npm install --save-dev jsdoc
+          
+          # Create JSDoc configuration
+          cat > jsdoc.conf.json << 'EOF'
+          {
+            "source": {
+              "include": ["./index.js", "./README.md"],
+              "includePattern": "\\.js$"
+            },
+            "opts": {
+              "destination": "./docs/",
+              "recurse": true
+            },
+            "plugins": ["plugins/markdown"],
+            "templates": {
+              "cleverLinks": false,
+              "monospaceLinks": false
+            }
+          }
+          EOF
+          
+          # Generate documentation
+          npx jsdoc -c jsdoc.conf.json
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: |
+            python/docs/_build/html/
+            js/docs/
+          retention-days: 30
+
+  deploy-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download documentation artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: documentation
+          path: docs/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

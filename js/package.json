@@ -1,7 +1,7 @@
 {
   "name": "magic-case",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.3.2",
+  "description": "Lightweight utilities for converting strings between common cases",
   "homepage": "https://github.com/shubhroshekhar/magic-case#readme",
   "bugs": {
     "url": "https://github.com/shubhroshekhar/magic-case/issues"
@@ -11,10 +11,51 @@
     "url": "git+https://github.com/shubhroshekhar/magic-case.git"
   },
   "license": "MIT",
-  "author": "shubhroshekhar",
-  "type": "commonjs",
+  "author": {
+    "name": "Shubhro Shekhar",
+    "email": "shubhroshekhar@gmail.com",
+    "url": "https://github.com/shubhroshekhar"
+  },
+  "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.cjs"
+    }
+  },
+  "bin": {
+    "magic-case": "./cli.js"
+  },
+  "files": [
+    "index.js",
+    "index.cjs",
+    "cli.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "case",
+    "conversion",
+    "camelcase",
+    "snakecase",
+    "kebabcase",
+    "pascalcase",
+    "string",
+    "utility"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/run-tests.js",
+    "build": "node scripts/build.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

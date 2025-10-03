@@ -1,0 +1,188 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'python/') || contains(github.event.head_commit.added, 'python/') || contains(github.event.head_commit.removed, 'python/') || github.event_name == 'pull_request'
+    env:
+      UV_PYTHON: python
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        task: ["test", "lint"]
+    defaults:
+      run:
+        working-directory: python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Sync dependencies
+        run: uv sync --no-progress
+
+      - name: Run tests
+        if: matrix.task == 'test'
+        run: uv run pytest -q
+
+      - name: Run linting
+        if: matrix.task == 'lint'
+        run: uv run ruff check .
+
+      - name: Run formatting check
+        if: matrix.task == 'lint'
+        run: uv run ruff format --check .
+
+  javascript-tests:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'js/') || contains(github.event.head_commit.added, 'js/') || contains(github.event.head_commit.removed, 'js/') || github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["18", "20", "21"]
+        task: ["test", "lint", "build"]
+    defaults:
+      run:
+        working-directory: js
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        if: matrix.task == 'test'
+        run: npm test
+
+      - name: Run linting
+        if: matrix.task == 'lint'
+        run: npm run lint
+
+      - name: Run formatting check
+        if: matrix.task == 'lint'
+        run: npx prettier --check .
+
+      - name: Build package
+        if: matrix.task == 'build'
+        run: npm run build
+
+      - name: Test CLI
+        if: matrix.task == 'test'
+        run: |
+          node cli.js --help
+          node cli.js camel "hello world"
+          node cli.js snake "camelCase"
+          node cli.js kebab "PascalCase"
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: [python-tests, javascript-tests]
+    if: always() && (needs.python-tests.result == 'success' || needs.javascript-tests.result == 'success')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Python package
+        if: needs.python-tests.result == 'success'
+        run: |
+          cd python
+          python -c "
+          from magic_case import CamelCase, SnakeCase
+          print('Python package test:')
+          print('  CamelCase(\"hello world\"):', str(CamelCase('hello world')))
+          print('  SnakeCase(\"camelCase\"):', str(SnakeCase('camelCase')))
+          "
+
+      - name: Test JavaScript package
+        if: needs.javascript-tests.result == 'success'
+        run: |
+          cd js
+          node --input-type=module -e "
+          const m = await import('./index.js');
+          console.log('JavaScript package test:');
+          console.log('  toCamelCase(\\\"hello world\\\"):', m.toCamelCase('hello world'));
+          console.log('  toSnakeCase(\\\"camelCase\\\"):', m.toSnakeCase('camelCase'));
+          "
+
+      - name: Cross-platform compatibility test
+        if: needs.python-tests.result == 'success' && needs.javascript-tests.result == 'success'
+        run: |
+          echo "Testing cross-platform compatibility..."
+          cd python
+          python -c "
+          from magic_case import CamelCase, SnakeCase, SpaceCase, PascalCase, KebabCase
+          import json
+          import subprocess
+          import sys
+          import os
+          
+          # Test data - using space-separated format as the common input
+          test_cases = ['hello world', 'this is a test', 'some example text']
+          
+          # Get Python results - convert from SpaceCase to CamelCase
+          py_results = {}
+          for case in test_cases:
+              # Parse as SpaceCase and convert to CamelCase
+              space_case = SpaceCase(case)
+              py_results[case] = str(CamelCase(space_case))
+          
+          # Get JavaScript results using a simpler approach
+          js_results = {}
+          for case in test_cases:
+              # Create a temporary JS file to avoid shell escaping issues
+              js_code = f'''const {{ toCamelCase }} = require('./js/index.cjs');
+console.log(toCamelCase('{case}'));'''
+              with open('../temp_test.js', 'w') as f:
+                  f.write(js_code)
+              
+              result = subprocess.run(['node', 'temp_test.js'], 
+                                    capture_output=True, text=True, cwd='..')
+              js_results[case] = result.stdout.strip()
+              
+              # Clean up
+              if os.path.exists('../temp_test.js'):
+                  os.remove('../temp_test.js')
+          # Compare results
+          print('Cross-platform compatibility test:')
+          all_match = True
+          for case in test_cases:
+              py_result = py_results[case]
+              js_result = js_results[case]
+              match = py_result == js_result
+              print(f'  {case}: Python={py_result}, JS={js_result}, Match={match}')
+              if not match:
+                  all_match = False
+          
+          if all_match:
+              print('✅ All cross-platform tests passed!')
+          else:
+              print('❌ Some cross-platform tests failed!')
+              sys.exit(1)
+          "
