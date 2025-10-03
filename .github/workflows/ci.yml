@@ -141,6 +141,7 @@ jobs:
           import json
           import subprocess
           import sys
+          import os
           
           # Test data - using space-separated format as the common input
           test_cases = ['hello world', 'this is a test', 'some example text']
@@ -152,12 +153,21 @@ jobs:
               space_case = SpaceCase(case)
               py_results[case] = str(CamelCase(space_case))
           
-          # Get JavaScript results
+          # Get JavaScript results using a simpler approach
           js_results = {}
           for case in test_cases:
-              result = subprocess.run(['node', '-e', f'const {{ toCamelCase }} = require(\"../js/index.cjs\"); console.log(toCamelCase(\"{case}\"))'], 
+              # Create a temporary JS file to avoid shell escaping issues
+              js_code = f'''const {{ toCamelCase }} = require('../js/index.cjs'); console.log(toCamelCase('{case}'));'''
+              with open('temp_test.js', 'w') as f:
+                  f.write(js_code)
+              
+              result = subprocess.run(['node', 'temp_test.js'], 
                                     capture_output=True, text=True, cwd='..')
               js_results[case] = result.stdout.strip()
+              
+              # Clean up
+              if os.path.exists('../temp_test.js'):
+                  os.remove('../temp_test.js')
           
           # Compare results
           print('Cross-platform compatibility test:')
