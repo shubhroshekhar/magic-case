@@ -114,10 +114,10 @@ jobs:
         run: |
           cd python
           python -c "
-          from magic_case import toCamelCase, toSnakeCase
+          from magic_case import CamelCase, SnakeCase
           print('Python package test:')
-          print('  toCamelCase(\"hello world\"):', toCamelCase('hello world'))
-          print('  toSnakeCase(\"camelCase\"):', toSnakeCase('camelCase'))
+          print('  CamelCase(\"hello world\"):', str(CamelCase('hello world')))
+          print('  SnakeCase(\"camelCase\"):', str(SnakeCase('camelCase')))
           "
 
       - name: Test JavaScript package
@@ -137,7 +137,7 @@ jobs:
           echo "Testing cross-platform compatibility..."
           cd python
           python -c "
-          from magic_case import toCamelCase as pyToCamelCase
+          from magic_case import CamelCase
           import json
           import subprocess
           import sys
@@ -148,7 +148,7 @@ jobs:
           # Get Python results
           py_results = {}
           for case in test_cases:
-              py_results[case] = pyToCamelCase(case)
+              py_results[case] = str(CamelCase(case))
           
           # Get JavaScript results
           js_results = {}
