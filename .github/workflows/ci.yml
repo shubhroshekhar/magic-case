@@ -157,8 +157,9 @@ jobs:
           js_results = {}
           for case in test_cases:
               # Create a temporary JS file to avoid shell escaping issues
-              js_code = f'''const {{ toCamelCase }} = require('../js/index.cjs'); console.log(toCamelCase('{case}'));'''
-              with open('temp_test.js', 'w') as f:
+              js_code = f'''const {{ toCamelCase }} = require('./js/index.cjs');
+console.log(toCamelCase('{case}'));'''
+              with open('../temp_test.js', 'w') as f:
                   f.write(js_code)
               
               result = subprocess.run(['node', 'temp_test.js'], 
@@ -168,7 +169,6 @@ jobs:
               # Clean up
               if os.path.exists('../temp_test.js'):
                   os.remove('../temp_test.js')
-          
           # Compare results
           print('Cross-platform compatibility test:')
           all_match = True
