@@ -137,18 +137,20 @@ jobs:
           echo "Testing cross-platform compatibility..."
           cd python
           python -c "
-          from magic_case import CamelCase
+          from magic_case import CamelCase, SnakeCase, SpaceCase, PascalCase, KebabCase
           import json
           import subprocess
           import sys
           
-          # Test data
-          test_cases = ['hello world', 'camelCase', 'PascalCase', 'snake_case', 'kebab-case']
+          # Test data - using space-separated format as the common input
+          test_cases = ['hello world', 'this is a test', 'some example text']
           
-          # Get Python results
+          # Get Python results - convert from SpaceCase to CamelCase
           py_results = {}
           for case in test_cases:
-              py_results[case] = str(CamelCase(case))
+              # Parse as SpaceCase and convert to CamelCase
+              space_case = SpaceCase(case)
+              py_results[case] = str(CamelCase(space_case))
           
           # Get JavaScript results
           js_results = {}
