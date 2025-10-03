@@ -1,0 +1,147 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check PR title
+        uses: amannn/action-semantic-pull-request@v5
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            test
+            chore
+            ci
+            build
+            revert
+          requireScope: false
+          disallowScopes: false
+
+      - name: Check for breaking changes
+        run: |
+          if [[ "${{ github.event.pull_request.title }}" =~ \[breaking\] ]]; then
+            echo "⚠️ Breaking changes detected in PR title"
+            echo "Please ensure this is intentional and update the version accordingly"
+          fi
+
+      - name: Check file changes
+        run: |
+          echo "## 📋 Changed Files" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Python changes:" >> $GITHUB_STEP_SUMMARY
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep "^python/" | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY || echo "- No Python changes" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### JavaScript changes:" >> $GITHUB_STEP_SUMMARY
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep "^js/" | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY || echo "- No JavaScript changes" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check version consistency
+        run: |
+          echo "## 🔍 Version Consistency Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Get Python version
+          if [ -f "python/pyproject.toml" ]; then
+            PYTHON_VERSION=$(python3 -c "import tomllib; print(tomllib.load(open('python/pyproject.toml', 'rb'))['project']['version'])" 2>/dev/null || echo "N/A")
+            echo "Python version: $PYTHON_VERSION" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Get JavaScript version
+          if [ -f "js/package.json" ]; then
+            JS_VERSION=$(node -p "require('./js/package.json').version" 2>/dev/null || echo "N/A")
+            echo "JavaScript version: $JS_VERSION" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check if versions match
+          if [ "$PYTHON_VERSION" = "$JS_VERSION" ] && [ "$PYTHON_VERSION" != "N/A" ]; then
+            echo "✅ Versions are consistent" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Version mismatch detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check for TODO/FIXME comments
+        run: |
+          echo "## 🔍 Code Quality Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Check for TODO/FIXME comments
+          TODO_COUNT=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -i "TODO\|FIXME" | wc -l)
+          if [ $TODO_COUNT -gt 0 ]; then
+            echo "⚠️ Found $TODO_COUNT TODO/FIXME comments in changes" >> $GITHUB_STEP_SUMMARY
+            git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -i "TODO\|FIXME" | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No TODO/FIXME comments found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check commit messages
+        run: |
+          echo "## 📝 Commit Messages" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Get commit messages
+          git log --oneline ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} | while read line; do
+            echo "- $line" >> $GITHUB_STEP_SUMMARY
+          done
+
+      - name: Add PR labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            
+            const changedFiles = pr.changed_files;
+            const labels = [];
+            
+            // Add labels based on changed files
+            if (changedFiles.some(file => file.startsWith('python/'))) {
+              labels.push('python');
+            }
+            if (changedFiles.some(file => file.startsWith('js/'))) {
+              labels.push('javascript');
+            }
+            if (changedFiles.some(file => file.startsWith('.github/'))) {
+              labels.push('ci');
+            }
+            if (changedFiles.some(file => file.includes('test'))) {
+              labels.push('tests');
+            }
+            if (changedFiles.some(file => file.includes('README') || file.includes('docs'))) {
+              labels.push('documentation');
+            }
+            
+            // Add size label
+            if (changedFiles <= 5) {
+              labels.push('size/small');
+            } else if (changedFiles <= 15) {
+              labels.push('size/medium');
+            } else {
+              labels.push('size/large');
+            }
+            
+            // Add labels to PR
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: labels
+              });
+            }

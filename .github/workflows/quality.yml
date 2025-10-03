@@ -1,0 +1,113 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  python-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Sync dependencies
+        working-directory: python
+        run: uv sync --no-progress
+
+      - name: Run tests with coverage
+        working-directory: python
+        run: |
+          uv add --dev pytest-cov
+          uv run pytest --cov=magic_case --cov-report=xml --cov-report=html
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: python/coverage.xml
+          flags: python
+          name: python-coverage
+          fail_ci_if_error: false
+
+      - name: Run mypy type checking
+        working-directory: python
+        run: |
+          uv add --dev mypy
+          uv run mypy magic_case/
+
+  javascript-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+          cache-dependency-path: js/package-lock.json
+
+      - name: Install dependencies
+        working-directory: js
+        run: npm ci
+
+      - name: Run tests with coverage
+        working-directory: js
+        run: |
+          npm install --save-dev c8
+          npm test -- --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: js/coverage/lcov.info
+          flags: javascript
+          name: javascript-coverage
+          fail_ci_if_error: false
+
+      - name: Run TypeScript type checking
+        working-directory: js
+        run: |
+          npm install --save-dev typescript @types/node
+          npx tsc --noEmit --allowJs --checkJs index.js
+
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python, javascript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=your-org
+            -Dsonar.projectKey=magic-case
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/node_modules/**,**/venv/**,**/dist/**,**/build/**

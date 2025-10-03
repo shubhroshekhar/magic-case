@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/python"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "shubhroshekhar"
+    assignees:
+      - "shubhroshekhar"
+    commit-message:
+      prefix: "python"
+      include: "scope"
+
+  # JavaScript dependencies
+  - package-ecosystem: "npm"
+    directory: "/js"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "shubhroshekhar"
+    assignees:
+      - "shubhroshekhar"
+    commit-message:
+      prefix: "js"
+      include: "scope"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "shubhroshekhar"
+    assignees:
+      - "shubhroshekhar"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
