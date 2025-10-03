@@ -14,6 +14,20 @@ module.exports = {
     'prefer-const': 'error',
     'no-var': 'error',
   },
+  overrides: [
+    {
+      files: ['test/**/*.js'],
+      env: { node: true },
+      globals: {
+        test: 'readonly',
+        describe: 'readonly',
+        expect: 'readonly',
+      },
+      rules: {
+        'no-unused-vars': 'off',
+      },
+    },
+  ],
 };
 
 

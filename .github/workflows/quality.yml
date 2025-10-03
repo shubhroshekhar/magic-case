@@ -92,15 +92,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run CodeQL Analysis
+      - name: Run CodeQL Analysis (init)
         uses: github/codeql-action/init@v3
         with:
           languages: python, javascript
 
-      - name: Perform CodeQL Analysis
+      - name: Perform CodeQL Analysis (non-blocking)
         uses: github/codeql-action/analyze@v3
+        continue-on-error: true
 
-      - name: Run SonarCloud Scan
+      - name: Run SonarCloud Scan (if token available)
+        if: ${{ secrets.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

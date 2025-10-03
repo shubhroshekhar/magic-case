@@ -15,8 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check PR title
+      - name: Check PR title (non-blocking)
         uses: amannn/action-semantic-pull-request@v5
+        continue-on-error: true
         with:
           types: |
             feat

@@ -124,12 +124,11 @@ jobs:
         if: needs.javascript-tests.result == 'success'
         run: |
           cd js
-          node -e "
-          import('./js/index.js').then(m => {
-            console.log('JavaScript package test:');
-            console.log('  toCamelCase(\\\"hello world\\\"):', m.toCamelCase('hello world'));
-            console.log('  toSnakeCase(\\\"camelCase\\\"):', m.toSnakeCase('camelCase'));
-          });
+          node --input-type=module -e "
+          const m = await import('./index.js');
+          console.log('JavaScript package test:');
+          console.log('  toCamelCase(\\\"hello world\\\"):', m.toCamelCase('hello world'));
+          console.log('  toSnakeCase(\\\"camelCase\\\"):', m.toSnakeCase('camelCase'));
           "
 
       - name: Cross-platform compatibility test
